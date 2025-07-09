@@ -10,7 +10,7 @@ def ingest_user_input():
     global verbose
     user_prompt = ""
     if len(sys.argv) < 2:
-        print("Usage: python main.py <content>")
+        print("Usage: python main.py <content> [--verbose]")
         sys.exit(1)
     
     if len(sys.argv) > 2:
