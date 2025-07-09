@@ -2,26 +2,51 @@ import os
 import sys
 from dotenv import load_dotenv
 from google import genai
+from google.genai import types
 
-# Load environment variables from .env file
-load_dotenv()
-api_key = os.environ.get("GEMINI_API_KEY")
+verbose = False
 
-client = genai.Client(api_key = api_key)
+def ingest_user_input():
+    global verbose
+    user_prompt = ""
+    if len(sys.argv) < 2:
+        print("Usage: python main.py <content>")
+        sys.exit(1)
+    
+    if len(sys.argv) > 2:
+        if sys.argv[2] == '--verbose':
+            verbose = True
+    
+    user_prompt = sys.argv[1]
+    return user_prompt
 
-if len(sys.argv) < 1:
-    print("Usage: uv run main.py <content>")
-    sys.exit(1)
+def setup():
+    load_dotenv()
+    return os.environ.get("GEMINI_API_KEY")
 
-contents = sys.argv[1]
+client = genai.Client(api_key = setup())
 
-response = client.models.generate_content(
-    model = "gemini-2.0-flash-001",
-    contents = contents
-)
-# get prompt tokens and response tokens using .usage_metadata
-prompt_tokens = response.usage_metadata.prompt_token_count
-response_tokens = response.usage_metadata.candidates_token_count
+def make_message(user_prompt):
+    return types.Content(role="user", parts=[types.Part(text=user_prompt)])
 
-print(f"Prompt tokens: {prompt_tokens}")
-print(f"Response tokens: {response_tokens}")
+def get_response(messages):
+    return client.models.generate_content(
+        model="gemini-2.0-flash-001",
+        contents=messages
+    )
+
+def main():
+    user_prompt = ingest_user_input()
+    if not user_prompt:
+        print("No user prompt provided.")
+        sys.exit(1)
+
+    messages = [make_message(user_prompt)]
+    response = get_response(messages)
+    
+    if verbose:
+        print(f"User prompt: {user_prompt}")
+        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}\nResponse tokens: {response.usage_metadata.candidates_token_count}")
+
+if __name__ == "__main__":
+    response = main()
