@@ -1,4 +1,5 @@
 from functions.get_files_info import get_files_info
+from functions.get_file_content import get_file_content
 
 def test_get_files_info(working_directory, directory=None):
     try:
@@ -19,22 +20,17 @@ def print_files_info(files_info, working_directory, directory=None):
             print(" " +file)
 
 def main():
-    # test 1
-    files_info = test_get_files_info('calculator', '.')
-    print_files_info(files_info, 'calculator', '.')
+    contents = get_file_content("calculator", "main.py")
+    print("Content of 'main.py':")
+    print(contents)
 
-    # test 2
-    files_info = test_get_files_info('calculator', 'pkg')
-    print_files_info(files_info, 'calculator', 'pkg')
+    contents = get_file_content("calculator", "pkg/calculator.py")
+    print("\nContent of 'pkg/calculator.py':")
+    print(contents)
 
-    # test 3
-    files_info = test_get_files_info('calculator', '/bin')
-    print_files_info(files_info, 'calculator', '/bin')
-
-    # test 4
-    files_info = test_get_files_info('calculator', '..')
-    print_files_info(files_info, 'calculator', '..')
-
+    contents = get_file_content("calculator", "/bin/cat.py")
+    print("\nContent of '/bin/cat.py':")
+    print(contents)
 
 if __name__ == "__main__":
     main()

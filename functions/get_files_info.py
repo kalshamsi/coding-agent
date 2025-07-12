@@ -32,4 +32,4 @@ def get_files_info(working_directory, directory=None):
     return_string = []
     for file in file_info:
         return_string.append(f"- {file['name']}: file_size={file['size']} bytes, is_dir={file['is_dir']}")
-    return return_string if return_string else ["No files found."]
+    return "\n".join(return_string) if return_string else ["No files found."]
