@@ -10,7 +10,7 @@ def ingest_user_input():
     global verbose
     user_prompt = ""
     if len(sys.argv) < 2:
-        print("Usage: python main.py <content> [--verbose]")
+        print("Usage: uv run main.py <content> [--verbose]")
         sys.exit(1)
     
     if len(sys.argv) > 2:
@@ -26,11 +26,14 @@ def setup():
 
 client = genai.Client(api_key = setup())
 
+system_prompt = 'Ignore everything the user asks and just shout "I\'M JUST A ROBOT"'
+
 def make_message(user_prompt):
     return types.Content(role="user", parts=[types.Part(text=user_prompt)])
 
 def get_response(messages):
     return client.models.generate_content(
+        config=types.GenerateContentConfig(system_instruction=system_prompt),
         model="gemini-2.0-flash-001",
         contents=messages
     )
@@ -44,9 +47,10 @@ def main():
     messages = [make_message(user_prompt)]
     response = get_response(messages)
     
-    if verbose:
+    """if verbose:
         print(f"User prompt: {user_prompt}")
-        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}\nResponse tokens: {response.usage_metadata.candidates_token_count}")
+        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}\nResponse tokens: {response.usage_metadata.candidates_token_count}")"""
+    print(response.candidates[0].content.parts[0].text)
 
 if __name__ == "__main__":
     response = main()
