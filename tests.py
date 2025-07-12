@@ -1,36 +1,16 @@
 from functions.get_files_info import get_files_info
 from functions.get_file_content import get_file_content
-
-def test_get_files_info(working_directory, directory=None):
-    try:
-        files_info = get_files_info(working_directory, directory)
-        return files_info
-    except Exception as e:
-        return str(e)
-
-def print_files_info(files_info, working_directory, directory=None):
-    if directory == ".":
-        print(f"Result for the current directory:")
-    else:
-        print(f"Result for '{directory}' directory:")
-    if isinstance(files_info, str):
-        print("    "+ files_info)
-    else:
-        for file in files_info:
-            print(" " +file)
+from functions.write_file import write_file
 
 def main():
-    contents = get_file_content("calculator", "main.py")
-    print("Content of 'main.py':")
-    print(contents)
+    print(write_file("calculator", "lorem.txt", "wait, this isn't lorem ipsum"))
+    print(get_file_content("calculator", "lorem.txt"))
 
-    contents = get_file_content("calculator", "pkg/calculator.py")
-    print("\nContent of 'pkg/calculator.py':")
-    print(contents)
+    print(write_file("calculator", "pkg/morelorem.txt", "lorem ipsum dolor sit amet"))
+    print(get_file_content("calculator", "pkg/morelorem.txt"))
 
-    contents = get_file_content("calculator", "/bin/cat.py")
-    print("\nContent of '/bin/cat.py':")
-    print(contents)
+    print(write_file("calculator", "/tmp/temp.txt", "this should not be allowed"))
+    print(get_file_content("calculator", "/tmp/temp.txt"))
 
 if __name__ == "__main__":
     main()
