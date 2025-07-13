@@ -4,10 +4,10 @@ def get_files_info(working_directory, directory=None):
     path = os.path.join(working_directory, directory)
     path = os.path.abspath(path)
     if not path.startswith(os.path.abspath(working_directory)):
-        raise Exception(f'Error: Cannot list "{directory}" as it is outside the permitted working directory.')
+        return (f'Error: Cannot list "{directory}" as it is outside the permitted working directory.')
     
     if not os.path.isdir(path):
-        raise Exception(f'Error: "{directory}" is not a directory.')
+        return (f'Error: "{directory}" is not a directory.')
     
     try:
         files = os.listdir(path)
@@ -32,4 +32,4 @@ def get_files_info(working_directory, directory=None):
     return_string = []
     for file in file_info:
         return_string.append(f"- {file['name']}: file_size={file['size']} bytes, is_dir={file['is_dir']}")
-    return "\n".join(return_string) if return_string else ["No files found."]
+    return "\n".join(return_string) if return_string else "No files found."
