@@ -8,6 +8,7 @@ from functions.get_files_info import get_files_info
 from functions.get_file_content import get_file_content
 from functions.write_file import write_file
 from functions.run_python_file import run_python_file
+from functions.call_functions import call_function
 
 verbose = False
 
@@ -141,37 +142,13 @@ def main():
     messages = [make_message(user_prompt)]
     response = get_response(messages)
 
-    # Handle function calls if any
-    if response.function_calls:
-        for function_call in response.function_calls:
-            print(f"Calling function: {function_call.name}({function_call.args})")
-            
-            # Get the working directory (current directory)
-            working_directory = os.getcwd()
-            
-            # Execute the appropriate function
-            if function_call.name == "get_files_info":
-                directory = function_call.args.get("directory", "") if function_call.args else ""
-                result = get_files_info(working_directory, directory)
-            elif function_call.name == "get_file_content":
-                file_path = function_call.args.get("file_path", "") if function_call.args else ""
-                result = get_file_content(working_directory, file_path)
-            elif function_call.name == "run_python_file":
-                file_path = function_call.args.get("file_path", "") if function_call.args else ""
-                result = run_python_file(working_directory, file_path)
-            elif function_call.name == "write_file":
-                file_path = function_call.args.get("file_path", "") if function_call.args else ""
-                content = function_call.args.get("content", "") if function_call.args else ""
-                result = write_file(working_directory, file_path, content)
-            else:
-                result = f"Unknown function: {function_call.name}"
-            
-            print(f"Function result: {result}")
-    
-    if verbose:
-        print(f"User prompt: {user_prompt}")
-        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}\nResponse tokens: {response.usage_metadata.candidates_token_count}")
-    
+    # use call_function to handle any function calls in the response
+    if response.candidates[0].content.parts[0].function_call:
+        func_call = response.candidates[0].content.parts[0].function_call
+        call_response = call_function(func_call, verbose=verbose)
+        if verbose:
+            print(f"-> {call_response.parts[0].function_response.response}")
+
     # Print the AI's response
     if response.candidates and len(response.candidates) > 0:
         candidate = response.candidates[0]
