@@ -162,7 +162,7 @@ def main():
     
     messages = [make_message(user_prompt)]
     
-    for iteration in range(10):
+    for iteration in range(20):
         try:
             response = get_response(messages)
             candidate = response.candidates[0]
