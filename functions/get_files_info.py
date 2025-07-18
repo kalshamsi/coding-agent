@@ -1,6 +1,8 @@
 import os
 
 def get_files_info(working_directory, directory=None):
+    if directory is None or directory == "":
+        directory = "."
     path = os.path.join(working_directory, directory)
     path = os.path.abspath(path)
     if not path.startswith(os.path.abspath(working_directory)):
